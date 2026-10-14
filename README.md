@@ -20,14 +20,14 @@ gh attestation verify <file> --repo irrvogel-interactive/releases
 
 ## Signed checksums
 
-`SHA256SUMS` in each release is signed with [minisign](https://jedisct1.github.io/minisign/). Public key:
+`SHA256SUMS.txt` in each release is signed with [minisign](https://jedisct1.github.io/minisign/). Public key:
 
 ```
 RWSxmY5haZM8KPjgPOyRzrtdgS0SuRhbIuYYD6TBDx19N/e4MmZNGpJ2
 ```
 
 ```
-minisign -Vm SHA256SUMS -P RWSxmY5haZM8KPjgPOyRzrtdgS0SuRhbIuYYD6TBDx19N/e4MmZNGpJ2
+minisign -Vm SHA256SUMS.txt -P RWSxmY5haZM8KPjgPOyRzrtdgS0SuRhbIuYYD6TBDx19N/e4MmZNGpJ2
 ```
 
 ## Contact
