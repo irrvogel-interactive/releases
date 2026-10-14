@@ -1,0 +1,45 @@
+# Copy to the PUBLIC releases repository as .github/workflows/attest.yml.
+#
+# Attests every file of a release when it is published, in GitHub's public Sigstore
+# transparency log (free here because this repository is public; the private plugin
+# repositories where the builds run would need Enterprise Cloud).
+#
+# What it proves: these exact files were published in this release, at this time.
+# A file swapped into an existing release later has no attestation, so
+#   gh attestation verify <file> --repo <owner>/<releases-repo>
+# fails for it. What it does NOT prove: that the files were built from our source; someone
+# with RELEASES_REPO_TOKEN can publish a new release and get it attested (visibly, in the
+# public log). The checksums on the product pages and, later, Windows code signing cover
+# the rest.
+#
+# Fires because release-plugin.yml publishes with a personal access token (releases made
+# with the default GITHUB_TOKEN would not start workflows). `gh release create` with files
+# uploads them to a draft first and publishes last, so all files are there at this point.
+
+name: attest
+
+on:
+  release:
+    types: [published]
+
+permissions: {}
+
+jobs:
+  attest:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    steps:
+      - name: Download the release files and check them against SHA256SUMS.txt
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --dir dist
+          cd dist && sha256sum --check --strict SHA256SUMS.txt
+
+      - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: dist/*
