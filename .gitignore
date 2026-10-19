@@ -1,0 +1,5 @@
+# Agent and workspace files never go into this public repo (owner 2026-10-19).
+.claude/
+CLAUDE.md
+AGENTS.md
+.scratch/
